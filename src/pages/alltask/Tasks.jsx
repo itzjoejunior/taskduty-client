@@ -11,7 +11,7 @@ export const Tasks = () => {
           <h1>My Task</h1>
         </div>
         <div>
-          <Link to="/newtask"> + Add New Task </Link>
+          <Link to="/newtask" className='purple'>  + Add New Task </Link>
         </div>
       </div>
 
@@ -24,8 +24,9 @@ export const Tasks = () => {
           <div className='d-flex justify-content-between align-items-center border-bottom  p-4 '>
             <h5>{datum.tags}</h5>
             <div className='d-flex gap-2 '>
-            <button className='btn btn-primary'>edit</button>
-            <button className='btn btn-primary'> delete</button>
+            
+            <Link to="/edittask" className="btn text-white btn-purple">Edit</Link>
+            <button className='btn text-white btn-purple'> delete</button>
           </div>
           </div>
             <div className='text-box p-4'>
@@ -37,7 +38,7 @@ export const Tasks = () => {
       ))}
     </div>
     <div className='d-flex justify-content-center py-4 '>
-    <a href="#top" className='text-center text-decoration-underline '> Back To Top</a>
+    <a href="#top" className='text-center purple text-decoration-underline '> Back To Top</a>
     </div>
     </div>
   )

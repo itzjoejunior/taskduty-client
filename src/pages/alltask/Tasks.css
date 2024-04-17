@@ -7,3 +7,18 @@
         width: 50%;
     }
 }
+
+.btn-purple {
+    background-color:  #974FD0 !important;
+;
+    color: white; /* Adjust text color as needed */
+  }
+
+  .purple{
+    color: #974FD0;
+  }
+  
+  /* .btn-purple:hover {
+    background-color: #974FD0;
+  } */
+  

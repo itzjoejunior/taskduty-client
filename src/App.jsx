@@ -4,6 +4,9 @@ import Home from './pages/home/Home'
 import RootLayout from './layout/RootLayout'
 import { Tasks } from './pages/alltask/Tasks'
 import NewTask from './pages/newtask/NewTask'
+import EditTask from './pages/edittask/EditTask'
+import SignIn from './auth/SignIn'
+import SingUp from './auth/SingUp'
 
 function App() {
 
@@ -14,7 +17,10 @@ function App() {
         <Route path='/' element={<Home/>}/>
         <Route path='/alltask' element={<Tasks/>}/>
         <Route path='/newtask' element={<NewTask/>}/>
+        <Route path='/edittask' element={<EditTask/>}/>
         </Route>
+        <Route path='/signin' element={<SignIn/>}/>
+        <Route path='/signup' element={<SingUp/>}/>
       </Routes>
     </BrowserRouter>
   )
