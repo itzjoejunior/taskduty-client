@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import logo from "../../assets/images/TDlogo.png";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -6,16 +6,22 @@ import "./Navbar.css";
 import SignIn from "../../auth/SignIn";
 import SingUp from "../../auth/SingUp";
 import Button from "react-bootstrap/Button";
+import AuthContext from "../../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const {loggedIn,logout} = useContext(AuthContext)
+
   const [modalShow, setModalShow] = useState(false);
   const [modalSignIn, setModalSignIn] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+  useEffect(()=>{
+    
+  },[loggedIn])
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light border-bottom py-4">
@@ -32,7 +38,7 @@ const Navbar = () => {
           } justify-content-end `}
         >
           {" "}
-          {isLoggedIn ? (
+          {loggedIn ? (
             <ul className={`navbar-nav ml-auto ${isOpen ? " py-4 " : ""}`}>
               <li className="nav-item text-center text-lg-start">
                 <Link className="nav-link" to="newtask">
@@ -44,6 +50,10 @@ const Navbar = () => {
                   All Task
                 </Link>
               </li>
+             <div>
+              <button className="btn btn-danger" onClick={logout}  >
+                logout</button>
+             </div>
             </ul>
           ) : (
             

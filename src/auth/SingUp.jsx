@@ -2,23 +2,83 @@ import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import logo from '../assets/images/TDlogo.png'
-import { Link } from 'react-router-dom';
+import { Link,useNavigate  } from 'react-router-dom';
 import './SignUp.css'
 import eyeIcon from '../assets/images/eye-icon.png'
+import toast from 'react-hot-toast';
 
 
-const SingUp = (props) => {
 
+const SignUp = () => {
+  const [email,setEmail] = useState("")
+  const [name,setName] = useState("")
+  const [password,setPassword] = useState("")
   const [reveal,setReveal] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+  const navigate = useNavigate()
 
 
-  const handleHide = () => {
-    setReveal(!reveal); // Toggle the state of reveal
+// const SingUp = (props) => {
+
+  
+
+
+  // const handleHide = () => {
+  //   setReveal(!reveal); // Toggle the state of reveal
+  // };
+
+  const handleSignUp = async (e)=>{
+    e.preventDefault()
+    const signUpData = {
+      email,
+      password,
+      name
+    };
+    setIsClicked(true)
+    try {
+      const request = await fetch("https://taskduty-server-c65y.onrender.com/api/v1/register", {
+        method:"POST",
+        headers:{
+          "Content-type":"application/json"
+        },
+        body:JSON.stringify(signUpData)
+      })
+      const reponse = await request.json();
+      console.log(reponse);
+      if (reponse.success === true){
+        toast.success(reponse.message);
+        setEmail("")
+        setName("")
+        setPassword("")
+        setIsClicked(true)
+        navigate("/SignIn")
+        return
+      }
+      if (reponse.success === false){
+        toast.error(reponse.message);
+        return
+      }
+      if(reponse.error.code === 11000){
+        toast.error("Email address alreay in use")
+        return
+      }
+
+      if (reponse.error.name === "ValidationError"){
+        toast.error(reponse.error.message)
+        return
+      }
+
+    } catch (error) {
+      console.log(error);
+    }finally{
+      setIsClicked(false)
+    }
   };
+  const btnText = isClicked ? "Loading....." : "Sign Up"
 
-  // function handleHide (){
-  //   !reveal ? setReveal(true): setReveal(false);
-  // }
+  function handleHide (){
+    !reveal ? setReveal(true): setReveal(false);
+  }
 
 
   return (
@@ -33,20 +93,23 @@ const SingUp = (props) => {
        </Link>
     </div>
 
-<Form>
+<Form onSubmit={handleSignUp}>
 {/* Name  */}
-<Form.Group className="mb-3" controlId="formBasicEmail">
+<Form.Group className="mb-3" controlId="formBasicName">
         <Form.Label>Name</Form.Label>
-        <Form.Control type="text" placeholder="Enter Your Full Name" />
-        {/* <Form.Text className="text-muted">
-          We'll never share your email with anyone else.
-        </Form.Text> */}
+        <Form.Control type="text" placeholder="Enter Name"
+        value={name}
+        onChange={(e)=>setName(e.target.value)}
+        />
       </Form.Group>
 
 {/* Email  */}
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>
-        <Form.Control type="email" placeholder="Enter email" />
+        <Form.Control type="email" placeholder="Enter email"
+        value={email}
+        onChange={(e)=>setEmail(e.target.value)}
+        />
         <Form.Text className="text-muted">
           We'll never share your email with anyone else.
         </Form.Text>
@@ -54,7 +117,10 @@ const SingUp = (props) => {
 {/* Password  */}
       <Form.Group className="mb-3 position-relative " controlId="formBasicPassword">
         <Form.Label>Password</Form.Label>
-        <Form.Control type={reveal ? "text" :"password"} placeholder="Password" />
+        <Form.Control type={reveal ? "text" :"password"} placeholder="Password"
+        value={password}
+        onChange={(e)=>setPassword(e.target.value)}
+        />
 
         <div className={`eye-icon ${reveal ? 'visible' : ''}`} onClick={handleHide}></div>
 
@@ -66,8 +132,8 @@ const SingUp = (props) => {
       {/* <Form.Group className="mb-3" controlId="formBasicCheckbox">
         <Form.Check type="checkbox" label="Check me out" />
       </Form.Group> */}
-      <Button variant="purple" type="submit">
-        Submit
+      <Button variant="purple" type="submit" disabled={isClicked}>
+        {btnText}
       </Button>
     </Form>
 
@@ -121,7 +187,7 @@ const SingUp = (props) => {
       
 
     </>
-  )
-}
+  );
+};
 
-export default SingUp
+export default SignUp;

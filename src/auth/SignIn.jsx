@@ -1,10 +1,77 @@
-import React from 'react'
+
+import React, {useState} from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import logo from '../assets/images/TDlogo.png'
-import { Link } from 'react-router-dom';
+import { Link,useNavigate} from 'react-router-dom';
+import toast from 'react-hot-toast';
 
-const SignIn = (props) => {
+const SignIn = () => {
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("")
+  const [reveal,setReveal] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+
+  const navigate = useNavigate()
+  
+
+  function handleHide (){
+    !reveal ? setReveal(true): setReveal(false);
+  }
+
+
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+
+    const logInData = {
+      email,
+      password
+    }
+
+    setIsClicked(true)
+
+    try {
+      const request = await fetch("https://taskduty-server-c65y.onrender.com/api/v1/login",{
+        method: "POST",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(logInData)
+      });
+      const response = await request.json()
+      console.log(response);
+      
+      if (response.success){
+        toast.success(response.message);
+        localStorage.setItem("token",response.token)
+        setEmail("")
+        setPassword("")
+        setIsClicked(true)
+        navigate('/alltask')
+        location.reload()
+        return;
+      }
+      // if(response.token) {
+      //   return;
+      // }
+      
+
+      if (response.success === false){
+        toast.error(response.message);
+        return;
+      }
+
+
+      
+    } catch (error) {
+      console.log(error);
+    }finally{
+      setIsClicked(false)
+    }
+
+  }
+  const btnText = isClicked ? "Loading....." : "Sign In"
   return (
     <>
 <div className='container py-4 w-75 mx-auto '>
@@ -15,22 +82,34 @@ const SignIn = (props) => {
        </Link>
     </div>
   
-<Form>
+<Form onSubmit={handleSignIn}>
+  {/* Email address */}
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>
-        <Form.Control type="email" placeholder="Enter email" />
+        <Form.Control type="email" placeholder="Enter email"
+        value={email}
+        onChange={(e)=>setEmail(e.target.value)}
+        />
         <Form.Text className="text-muted">
           We'll never share your email with anyone else.
         </Form.Text>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicPassword">
+{/* Password  */}
+<Form.Group className="mb-3 position-relative " controlId="formBasicPassword">
         <Form.Label>Password</Form.Label>
-        <Form.Control type="password" placeholder="Password" />
+        <Form.Control type={reveal ? "text" :"password"} placeholder="Password"
+        value={password}
+        onChange={(e)=>setPassword(e.target.value)}
+        />
+
+        <div className={`eye-icon ${reveal ? 'visible' : ''}`} onClick={handleHide}></div>
       </Form.Group>
+
+
       
-      <Button variant="purple" type="submit">
-        Submit
+      <Button variant="purple" type="submit" disabled= {isClicked}>
+        {btnText}
       </Button>
     </Form>
 </div>
